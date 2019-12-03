@@ -1,0 +1,192 @@
+BootStrap: library
+From: ubuntu:18.04
+
+%setup 
+    rm -r /opt/Build_WRF
+    mkdir -p /opt/Build_WRF/LIBRARIES
+    mkdir -p /opt/Build_WRF/Run/WPS/geogrid
+    mkdir -p /opt/Build_WRF/Run/WPS/metgrid    
+    mkdir -p /opt/Build_WRF/Run/WRF
+
+%files
+    # Uncomment this if you already have the tar files and just want to pass them into the image
+    # /home/joshua/hdf5-1.10.5.tar.gz /opt/Build_WRF/LIBRARIES/hdf5-1.10.5.tar.gz
+    # /home/joshua/netcdf-c-4.7.2.tar.gz /opt/Build_WRF/LIBRARIES/netcdf-c-4.7.2.tar.gz
+    # /home/joshua/netcdf-fortran-4.5.2.tar.gz /opt/Build_WRF/LIBRARIES/netcdf-fortran-4.5.2.tar.gz
+    # /home/joshua/mpich-3.0.4.tar.gz /opt/Build_WRF/LIBRARIES/mpich-3.0.4.tar.gz
+    # /home/joshua/zlib-1.2.11.tar.gz /opt/Build_WRF/LIBRARIES/zlib-1.2.11.tar.gz
+    # /home/joshua/jasper-1.900.1.tar.gz /opt/Build_WRF/LIBRARIES/jasper-1.900.1.tar.gz
+    configure.wps /tmp/configure.wps
+    configure.wrf /tmp/configure.wrf
+
+%post
+    apt-get -y update
+    apt-get -y install gcc gfortran g++ git wget build-essential libpng-dev libcurl4-gnutls-dev m4 software-properties-common
+    add-apt-repository universe
+    apt-get -y install csh
+
+    BASE_DIR=/opt/Build_WRF
+    DIR=$BASE_DIR/LIBRARIES
+    export CC=gcc
+    export CXX=g++
+    export FC=gfortran
+    export FCFLAGS=-m64
+    export F77=gfortran
+    export FFLAGS=-m64
+    export JASPERLIB=$DIR/grib2/lib 
+    export JASPERINC=$DIR/grib2/include  
+    export PATH="$DIR/mpich/bin:$DIR/netcdf/bin:$PATH"
+    export NETCDF=$DIR/netcdf
+    export HDF5=$DIR/hdf5/lib
+    export LDFLAGS="-L$DIR/grib2/lib -L${DIR}/hdf5/lib -L${DIR}/netcdf/lib"
+    export CPPFLAGS="-I$DIR/grib2/include -I${DIR}/hdf5/include -I${DIR}/netcdf/include"
+    export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
+
+    cd $DIR
+
+    wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz
+    tar xzvf hdf5-1.10.5.tar.gz
+    cd hdf5-1.10.5
+    ./configure --prefix=$DIR/hdf5 --enable-fortran
+    make
+    make install
+    cd .. 
+
+    wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.2.tar.gz
+    tar xzvf netcdf-c-4.7.2.tar.gz     
+    cd netcdf-c-4.7.2
+    ./configure --prefix=$DIR/netcdf --enable-netcdf-4 LDFLAGS="-L$DIR/hdf5/lib" CPPFLAGS="-I$DIR/hdf5/include" 
+    make
+    make install
+    cd .. 
+
+    wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.5.2.tar.gz
+    tar xzvf netcdf-fortran-4.5.2.tar.gz
+    cd netcdf-fortran-4.5.2
+    ./configure --prefix=$DIR/netcdf LDFLAGS="$LDFLAGS" CPPFLAGS="$CPPFLAGS" 
+    make 
+    make install
+    cd .. 
+
+    wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
+    tar xzvf mpich-3.0.4.tar.gz      
+    cd mpich-3.0.4
+    ./configure --prefix=$DIR/mpich
+    make
+    make install
+    cd .. 
+
+    wget https://www.zlib.net/zlib-1.2.11.tar.gz
+    tar xzvf zlib-1.2.11.tar.gz    
+    cd zlib-1.2.11
+    ./configure --prefix=$DIR/grib2
+    make
+    make install
+    cd .. 
+
+    wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
+    tar xzvf jasper-1.900.1.tar.gz  
+    cd jasper-1.900.1
+    ./configure --prefix=$DIR/grib2
+    make
+    make install
+    cd ../../ 
+
+    git clone https://github.com/wrf-model/WRF.git
+    mv /tmp/configure.wrf /opt/Build_WRF/WRF/configure.wrf
+    cd WRF
+    # ./configure
+    ./compile em_real 
+    #> compile.log 2>&1 
+    cd ..
+
+    git clone https://github.com/wrf-model/WPS.git
+    mv /tmp/configure.wps /opt/Build_WRF/WPS/configure.wps
+    cd WPS
+    # ./configure
+    ./compile 
+    #> compile.log 2>&1 
+    cd ..
+
+    # download geo data
+    # wget http://www2.mmm.ucar.edu/wrf/src/wps_files/geog_high_res_mandatory.tar.gz
+    # tar xzvf geog_high_res_mandatory.tar.gz     
+    # rm geog_high_res_mandatory.tar.gz   
+
+    # update GEOG path in config
+    cd WPS
+    sed -i 's/\/glade\/work\/wrfhelp/\/opt\/Build_WRF/g' namelist.wps
+
+    mkdir -p /opt/Build_WRF/LIBRARIES
+    mkdir -p /opt/Build_WRF/Run/WPS/geogrid
+    mkdir -p /opt/Build_WRF/Run/WPS/metgrid    
+    mkdir -p /opt/Build_WRF/Run/WRF   
+
+    cp $BASE_DIR/WPS/geogrid/GEOGRID.TBL.ARW $BASE_DIR/Run/WPS/GEOGRID.TBL
+    cp $BASE_DIR/WPS/link_grib.csh $BASE_DIR/Run/WPS/link_grib.csh
+    cp $BASE_DIR/WPS/ungrib/Variable_Tables/Vtable.GFS $BASE_DIR/Run/WPS/Vtable
+    cp $BASE_DIR/WPS/*.exe $BASE_DIR/Run/WPS
+    cp $BASE_DIR/WPS/namelist* $BASE_DIR/Run/WPS
+    cp $BASE_DIR/WPS/metgrid/*.TBL* $BASE_DIR/Run/WPS/metgrid
+    cp $BASE_DIR/WPS/geogrid/*.TBL* $BASE_DIR/Run/WPS/geogrid
+
+    cp $BASE_DIR/WRF/run/* $BASE_DIR/Run/WRF
+
+
+%test
+    DIR=/opt/Build_WRF/LIBRARIES
+    export CC=gcc
+    export CXX=g++
+    export FC=gfortran
+    export FCFLAGS=-m64
+    export F77=gfortran
+    export FFLAGS=-m64
+    export JASPERLIB=$DIR/grib2/lib 
+    export JASPERINC=$DIR/grib2/include  
+    export PATH="$DIR/mpich/bin:$DIR/netcdf/bin:$PATH"
+    export NETCDF=$DIR/netcdf
+    export HDF5=$DIR/hdf5/lib
+    export LDFLAGS="-L$DIR/grib2/lib -L${DIR}/hdf5/lib -L${DIR}/netcdf/lib"
+    export CPPFLAGS="-I$DIR/grib2/include -I${DIR}/hdf5/include -I${DIR}/netcdf/include"
+    export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
+
+    cd /opt/Build_WRF/LIBRARIES/netcdf-c-4.7.2
+    make check
+    cd .. 
+
+    cd netcdf-fortran-4.5.2
+    make check
+    cd .. 
+
+%environment
+    export DIR=/opt/Build_WRF/LIBRARIES
+    export CC=gcc
+    export CXX=g++
+    export FC=gfortran
+    export FCFLAGS=-m64
+    export F77=gfortran
+    export FFLAGS=-m64
+    export JASPERLIB=$DIR/grib2/lib 
+    export JASPERINC=$DIR/grib2/include
+    export NETCDF=$DIR/netcdf
+    export HDF5=$DIR/hdf5
+    export HDF5_LIB=-L$HDF5/lib 
+    export LDFLAGS="-L$DIR/grib2/lib -L$HDF5/lib -L${NETCDF}/lib"
+    export CPPFLAGS="-I$DIR/grib2/include -I$HDF5/include -I${NETCDF}/include"
+    export PATH="$DIR/hdf5/bin:$PATH"
+    export LD_LIBRARY_PATH=$HDF5/lib:$NETCDF/lib:$LD_LIBRARY_PATH
+    export PATH="$NETCDF:$DIR/mpich/bin:$PATH"
+
+%runscript
+    echo "Container is running and ready to execute the WRF."
+
+%labels
+    Author hello@joshmartin.me
+    Version v1.0.0
+    WRFVersion v4.1.0
+
+%help
+    Be sure to mount a directory to the GEOG data and for the GFS data!
+
+
+#  https://sylabs.io/guides/3.5/user-guide/definition_files.html#multi-stage-builds
