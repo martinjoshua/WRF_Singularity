@@ -67,12 +67,12 @@ singularity shell --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif
 /opt/Build_WRF/Run/WPS/metgrid.exe
 ```
 
-##### Run real
+#### Run real
 ```
 /opt/Build_WRF/Run/WRF/real.exe
 ```
 
-##### Run WRF
+#### Run WRF
 ```
 /opt/Build_WRF/Run/WRF/wrf.exe
 ```
