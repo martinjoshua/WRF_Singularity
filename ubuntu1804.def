@@ -3,7 +3,7 @@ From: ubuntu:18.04
 Stage: develop
 
 %setup 
-    rm -r /opt/Build_WRF
+    rm -rf /opt/Build_WRF
 
 %files
     # Uncomment this if you already have the tar files and just want to pass them into the image (but don't forget to comment out the wget's in the %post)
@@ -163,7 +163,7 @@ From: ubuntu:18.04
 Stage: final
 
 %setup 
-    rm -r /opt/Build_WRF
+    rm -rf /opt/Build_WRF
     mkdir -p /opt/Build_WRF/LIBRARIES
     mkdir -p /opt/Build_WRF/Run
 
