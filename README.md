@@ -23,10 +23,11 @@ tar xzvf geog_high_res_mandatory.tar.gz
 sudo singularity build wrf.sif ubuntu1804.def
 ```
 
-#### Download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
+#### Set exec permission and download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
 
 ```
 cd wrf-run
+chmod +x download.sh link_grib.csh
 ./download.sh <your e-mail address>
 ```
 
@@ -40,7 +41,7 @@ nano namelist.input
 #### Shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
 
 ```
-singularity shell --bind /<path to GEOG data>/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.sif
+singularity shell --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif
 ```
 
 #### Run WPS (within the shell)
@@ -66,7 +67,12 @@ singularity shell --bind /<path to GEOG data>/WPS_GEOG:/mnt/WPS_GEOG ../singular
 /opt/Build_WRF/Run/WPS/metgrid.exe
 ```
 
-##### Run WRF
+#### Run real
+```
+/opt/Build_WRF/Run/WRF/real.exe
+```
+
+#### Run WRF
 ```
 /opt/Build_WRF/Run/WRF/wrf.exe
 ```
