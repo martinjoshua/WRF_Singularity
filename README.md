@@ -23,10 +23,11 @@ tar xzvf geog_high_res_mandatory.tar.gz
 sudo singularity build wrf.sif wrf.def
 ```
 
-#### Download the initialization files for the WRF from NCEP and move to wrf-test/DATA
+#### Download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
 
 ```
 cd wrf-run
+./download.sh <your e-mail address>
 ```
 
 #### From the wrf-test directory, shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
