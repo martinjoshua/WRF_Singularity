@@ -23,11 +23,12 @@ tar xzvf geog_high_res_mandatory.tar.gz
 sudo singularity build wrf.sif ubuntu1804.def
 ```
 
-#### Download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
+#### Set exec permission and download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
 
 ```
 cd wrf-run
 chmod +x download.sh
+chmod +x link_grib.csh
 ./download.sh <your e-mail address>
 ```
 
