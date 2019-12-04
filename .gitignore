@@ -4,3 +4,4 @@ wrf-run/met_em.*
 wrf-run/*.log
 wrf-run/DATA/*
 wrf-run/namelist.output
+wrf-run/*.nc
