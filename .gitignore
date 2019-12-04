@@ -5,3 +5,6 @@ wrf-run/*.log
 wrf-run/DATA/*
 wrf-run/namelist.output
 wrf-run/*.nc
+wrf-run/FILE:*
+wrf-run/wrf*
+*.sif
