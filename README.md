@@ -57,5 +57,5 @@ singularity shell --bind /home/joshua/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.
 
 ##### Run WRF
 ```
-/opt/Build_WRF/Run/WRF/wrf.exe`
+/opt/Build_WRF/Run/WRF/wrf.exe
 ```
