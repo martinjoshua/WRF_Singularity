@@ -4,10 +4,6 @@ Stage: develop
 
 %setup 
     rm -r /opt/Build_WRF
-    mkdir -p /opt/Build_WRF/LIBRARIES
-    mkdir -p /opt/Build_WRF/Run/WPS/geogrid
-    mkdir -p /opt/Build_WRF/Run/WPS/metgrid    
-    mkdir -p /opt/Build_WRF/Run/WRF
 
 %files
     # Uncomment this if you already have the tar files and just want to pass them into the image (but don't forget to comment out the wget's in the %post)
@@ -42,6 +38,11 @@ Stage: develop
     export LDFLAGS="-L$DIR/grib2/lib -L${DIR}/hdf5/lib -L${DIR}/netcdf/lib"
     export CPPFLAGS="-I$DIR/grib2/include -I${DIR}/hdf5/include -I${DIR}/netcdf/include"
     export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
+
+    mkdir -p $BASE_DIR/LIBRARIES
+    mkdir -p $BASE_DIR/Run/WPS/geogrid
+    mkdir -p $BASE_DIR/Run/WPS/metgrid    
+    mkdir -p $BASE_DIR/Run/WRF
 
     cd $DIR
 
@@ -118,10 +119,10 @@ Stage: develop
     cd WPS
     sed -i 's/\/glade\/work\/wrfhelp/\/mnt/g' namelist.wps
 
-    mkdir -p /opt/Build_WRF/LIBRARIES
-    mkdir -p /opt/Build_WRF/Run/WPS/geogrid
-    mkdir -p /opt/Build_WRF/Run/WPS/metgrid    
-    mkdir -p /opt/Build_WRF/Run/WRF   
+    mkdir -p $BASE_DIR/LIBRARIES
+    mkdir -p $BASE_DIR/Run/WPS/geogrid
+    mkdir -p $BASE_DIR/Run/WPS/metgrid    
+    mkdir -p $BASE_DIR/Run/WRF   
 
     cp $BASE_DIR/WPS/geogrid/GEOGRID.TBL.ARW $BASE_DIR/Run/WPS/GEOGRID.TBL
     cp $BASE_DIR/WPS/link_grib.csh $BASE_DIR/Run/WPS/link_grib.csh
@@ -130,9 +131,7 @@ Stage: develop
     cp $BASE_DIR/WPS/namelist* $BASE_DIR/Run/WPS
     cp $BASE_DIR/WPS/metgrid/*.TBL* $BASE_DIR/Run/WPS/metgrid
     cp $BASE_DIR/WPS/geogrid/*.TBL* $BASE_DIR/Run/WPS/geogrid
-
     cp $BASE_DIR/WRF/run/* $BASE_DIR/Run/WRF
-
 
 %test
     DIR=/opt/Build_WRF/LIBRARIES
@@ -151,7 +150,7 @@ Stage: develop
     export CPPFLAGS="-I$DIR/grib2/include -I${DIR}/hdf5/include -I${DIR}/netcdf/include"
     export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
 
-    cd /opt/Build_WRF/LIBRARIES/netcdf-c-4.7.2
+    cd $DIR/netcdf-c-4.7.2
     make check
     cd .. 
 
