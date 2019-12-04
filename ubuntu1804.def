@@ -1,5 +1,6 @@
 BootStrap: library
 From: ubuntu:18.04
+Stage: develop
 
 %setup 
     rm -r /opt/Build_WRF
@@ -9,7 +10,7 @@ From: ubuntu:18.04
     mkdir -p /opt/Build_WRF/Run/WRF
 
 %files
-    # Uncomment this if you already have the tar files and just want to pass them into the image
+    # Uncomment this if you already have the tar files and just want to pass them into the image (but don't forget to comment out the wget's in the %post)
     # /home/joshua/hdf5-1.10.5.tar.gz /opt/Build_WRF/LIBRARIES/hdf5-1.10.5.tar.gz
     # /home/joshua/netcdf-c-4.7.2.tar.gz /opt/Build_WRF/LIBRARIES/netcdf-c-4.7.2.tar.gz
     # /home/joshua/netcdf-fortran-4.5.2.tar.gz /opt/Build_WRF/LIBRARIES/netcdf-fortran-4.5.2.tar.gz
@@ -115,7 +116,7 @@ From: ubuntu:18.04
 
     # update GEOG path in config
     cd WPS
-    sed -i 's/\/glade\/work\/wrfhelp/\/opt\/Build_WRF/g' namelist.wps
+    sed -i 's/\/glade\/work\/wrfhelp/\/mnt/g' namelist.wps
 
     mkdir -p /opt/Build_WRF/LIBRARIES
     mkdir -p /opt/Build_WRF/Run/WPS/geogrid
@@ -158,24 +159,36 @@ From: ubuntu:18.04
     make check
     cd .. 
 
+BootStrap: library
+From: ubuntu:18.04
+Stage: final
+
+%setup 
+    rm -r /opt/Build_WRF
+    mkdir -p /opt/Build_WRF/LIBRARIES
+    mkdir -p /opt/Build_WRF/Run
+
+%files from develop
+    /opt/Build_WRF/LIBRARIES/hdf5
+    /opt/Build_WRF/LIBRARIES/netcdf
+    /opt/Build_WRF/LIBRARIES/mpich
+    /opt/Build_WRF/LIBRARIES/grib2
+    /opt/Build_WRF/Run
+
+%post
+    apt-get -y update
+    apt-get -y install gfortran software-properties-common libpng-dev libcurl4-gnutls-dev
+    add-apt-repository universe
+    apt-get -y install csh    
+
 %environment
     export DIR=/opt/Build_WRF/LIBRARIES
-    export CC=gcc
-    export CXX=g++
-    export FC=gfortran
-    export FCFLAGS=-m64
-    export F77=gfortran
-    export FFLAGS=-m64
     export JASPERLIB=$DIR/grib2/lib 
     export JASPERINC=$DIR/grib2/include
     export NETCDF=$DIR/netcdf
     export HDF5=$DIR/hdf5
-    export HDF5_LIB=-L$HDF5/lib 
-    export LDFLAGS="-L$DIR/grib2/lib -L$HDF5/lib -L${NETCDF}/lib"
-    export CPPFLAGS="-I$DIR/grib2/include -I$HDF5/include -I${NETCDF}/include"
-    export PATH="$DIR/hdf5/bin:$PATH"
-    export LD_LIBRARY_PATH=$HDF5/lib:$NETCDF/lib:$LD_LIBRARY_PATH
-    export PATH="$NETCDF:$DIR/mpich/bin:$PATH"
+    export PATH="$DIR/hdf5/bin:$NETCDF:$DIR/mpich/bin:$PATH"
+    export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
 
 %runscript
     echo "Container is running and ready to execute the WRF."
@@ -186,7 +199,13 @@ From: ubuntu:18.04
     WRFVersion v4.1.0
 
 %help
-    Be sure to mount a directory to the GEOG data and for the GFS data!
+    Be sure to mount a directory to the GEOG data
 
-
-#  https://sylabs.io/guides/3.5/user-guide/definition_files.html#multi-stage-builds
+    cd wrf-run
+    download init files
+    singularity shell --bind /home/joshua/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.sif
+    /opt/Build_WRF/Run/WPS/geogrid.exe
+    ./link_grib.csh DATA/GFS
+    /opt/Build_WRF/Run/WPS/ungrib.exe
+    /opt/Build_WRF/Run/WPS/metgrid.exe
+    /opt/Build_WRF/Run/WRF/wrf.exe
