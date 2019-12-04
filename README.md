@@ -37,10 +37,10 @@ nano namelist.wps
 nano namelist.input
 ```
 
-#### From the wrf-test directory, shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
+#### Shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
 
 ```
-singularity shell --bind /home/joshua/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.sif
+singularity shell --bind /<path to GEOG data>/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.sif
 ```
 
 #### Run WPS (within the shell)
