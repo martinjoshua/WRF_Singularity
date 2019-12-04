@@ -1,5 +1,8 @@
 # WRF_Singularity
 
+Before getting started, follow the directions on the [Singularity Installation page](https://sylabs.io/guides/3.5/user-guide/installation.html).
+
+
 #### Clone the repository
 
 ```
