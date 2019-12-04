@@ -30,6 +30,13 @@ cd wrf-run
 ./download.sh <your e-mail address>
 ```
 
+#### Modify the below namelists to match the downloaded files
+
+```
+nano namelist.wps
+nano namelist.input
+```
+
 #### From the wrf-test directory, shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
 
 ```
