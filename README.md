@@ -27,6 +27,7 @@ sudo singularity build wrf.sif ubuntu1804.def
 
 ```
 cd wrf-run
+chmod +x download.sh
 ./download.sh <your e-mail address>
 ```
 
