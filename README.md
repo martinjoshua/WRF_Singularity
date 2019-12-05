@@ -39,7 +39,7 @@ nano namelist.wps
 nano namelist.input
 ```
 
-#### Run WPS (mounting the WPS_GEOG data to /mnt/WPS_GEOG)
+#### Run WPS (binding the WPS_GEOG directory to /mnt/WPS_GEOG)
 
 ```
 singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WPS/geogrid.exe"
