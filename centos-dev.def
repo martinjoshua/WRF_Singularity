@@ -1,0 +1,47 @@
+BootStrap: localimage
+From: centos7/
+
+%setup 
+    rm -rf /opt/Build_WRF
+    mkdir -p /opt/Build_WRF/LIBRARIES
+    mkdir -p /opt/Build_WRF/Run
+
+%files 
+    /opt/Build_WRF/LIBRARIES/hdf5
+    /opt/Build_WRF/LIBRARIES/netcdf
+    /opt/Build_WRF/LIBRARIES/mpich
+    /opt/Build_WRF/LIBRARIES/grib2
+    /opt/Build_WRF/Run
+
+%post
+    yum -y update
+    yum -y install gcc-gfortran csh libpng-devel curl-devel
+
+%environment
+    export DIR=/opt/Build_WRF/LIBRARIES
+    export JASPERLIB=$DIR/grib2/lib 
+    export JASPERINC=$DIR/grib2/include
+    export NETCDF=$DIR/netcdf
+    export HDF5=$DIR/hdf5
+    export PATH="$DIR/hdf5/bin:$NETCDF:$DIR/mpich/bin:$PATH"
+    export LD_LIBRARY_PATH=${DIR}/netcdf/lib:$DIR/hdf5/lib:$LD_LIBRARY_PATH
+
+%runscript
+    echo "Container is running and ready to execute the WRF."
+
+%labels
+    Author hello@joshmartin.me
+    Version v1.0.0
+    WRFVersion v4.1.0
+
+%help
+    Be sure to mount a directory to the GEOG data
+
+    cd wrf-run
+    download init files
+    singularity shell --bind /home/joshua/WPS_GEOG:/mnt/WPS_GEOG ../singularity/wrf.sif
+    /opt/Build_WRF/Run/WPS/geogrid.exe
+    ./link_grib.csh DATA/GFS
+    /opt/Build_WRF/Run/WPS/ungrib.exe
+    /opt/Build_WRF/Run/WPS/metgrid.exe
+    /opt/Build_WRF/Run/WRF/wrf.exe
