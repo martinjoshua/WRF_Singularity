@@ -1,11 +1,12 @@
-# WRF_Singularity
+# WRF Singularity
 
 Before getting started, follow the directions on the [Singularity Installation page](https://sylabs.io/guides/3.5/user-guide/installation.html).
 
 
-#### Clone the repository
+#### Install mpich on the host and clone the repository
 
 ```
+sudo apt-get install mpich
 git clone https://github.com/martinjoshua/WRF_Singularity.git`
 cd WRF_Singularity
 ```
