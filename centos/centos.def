@@ -175,7 +175,7 @@ Stage: final
 
 %post
     yum -y update
-    yum -y install gcc-gfortran csh libpng-devel curl-devel which
+    yum -y install gcc-gfortran csh libpng-devel curl-devel
 
 %environment
     export DIR=/opt/Build_WRF/LIBRARIES
