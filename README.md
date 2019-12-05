@@ -31,7 +31,7 @@ sudo singularity build ../wrf.sif centos.def
 #### Set exec permission and download the initialization data for the WRF from NCEP (modify download.sh to change date/time)
 
 ```
-cd wrf-run
+cd ../wrf-run
 chmod +x download.sh link_grib.csh
 ./download.sh <your e-mail address>
 ```
