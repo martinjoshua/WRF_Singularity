@@ -21,7 +21,11 @@ tar xzvf geog_high_res_mandatory.tar.gz
 #### Build the singularity image for the WRF-ARW
 
 ```
-sudo singularity build wrf.sif ubuntu1804.def
+cd ubuntu
+sudo singularity build ../wrf.sif ubuntu1804.def
+# OR
+cd centos
+sudo singularity build ../wrf.sif centos.def
 ```
 
 #### Set exec permission and download the initialization data for the WRF from NCEP (modify download.sh to change date/time)
