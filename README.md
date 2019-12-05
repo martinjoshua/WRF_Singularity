@@ -23,7 +23,7 @@ tar xzvf geog_high_res_mandatory.tar.gz
 sudo singularity build wrf.sif ubuntu1804.def
 ```
 
-#### Set exec permission and download the initialization files for the WRF from NCEP (modify download.sh to change date/time)
+#### Set exec permission and download the initialization data for the WRF from NCEP (modify download.sh to change date/time)
 
 ```
 cd wrf-run
@@ -38,41 +38,38 @@ nano namelist.wps
 nano namelist.input
 ```
 
-#### Shell into the singularity image and mount the GEOG data to /mnt/WPS_GEOG
+#### Run WPS (mounting the WPS_GEOG data to /mnt/WPS_GEOG)
 
 ```
-singularity shell --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif
-```
-
-#### Run WPS (within the shell)
-
-```
-/opt/Build_WRF/Run/WPS/geogrid.exe
+singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WPS/geogrid.exe"
 ```
 
 #### Run the link_grib script (which copies and renames the grib files in the DATA directory to the working directory)
 
 ```
-./link_grib.csh DATA/GFS
+singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif /bin/bash -c "./link_grib.csh DATA/GFS"
 ```
 
 #### Run ungrib
+
 ```
-/opt/Build_WRF/Run/WPS/ungrib.exe
+singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WPS/ungrib.exe"
 ```
 
 #### Run metgrid
 
 ```
-/opt/Build_WRF/Run/WPS/metgrid.exe
+singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WPS/metgrid.exe"
 ```
 
 #### Run real
+
 ```
-/opt/Build_WRF/Run/WRF/real.exe
+singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WRF/real.exe"
 ```
 
-#### Run WRF
+#### Run WRF (setting number of processors to 2)
+
 ```
-/opt/Build_WRF/Run/WRF/wrf.exe
+mpirun -np 2 singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WRF/wrf.exe"
 ```
