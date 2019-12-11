@@ -93,9 +93,9 @@ ESMF_TARGET         = esmf_time
 NETCDF4_IO_OPTS = -DUSE_NETCDF4_FEATURES -DWRFIO_NCD_LARGE_FILE_SUPPORT
 GPFS            =
 CURL            =
-HDF5            =
-ZLIB            =
-DEP_LIB_PATH    = 
+HDF5            = -lhdf5 -lhdf5_hl
+ZLIB            = -lz
+DEP_LIB_PATH    = -L/opt/Build_WRF/LIBRARIES/grib2/lib -L/opt/Build_WRF/LIBRARIES/hdf5/lib
 NETCDF4_DEP_LIB = $(DEP_LIB_PATH) $(HDF5) $(ZLIB) $(GPFS) $(CURL)
 
 # NETCDF4INCLUDEGOESHERE
@@ -118,14 +118,14 @@ OMPCC           =       # -fopenmp
 SFC             =       gfortran
 SCC             =       gcc
 CCOMP           =       gcc
-DM_FC           =       mpif90 -f90=$(SFC)
+DM_FC           =       mpif90 
 DM_CC           =       mpicc -cc=$(SCC)
 FC              =       time $(DM_FC)
 CC              =       $(DM_CC) -DFSEEKO64_OK 
 LD              =       $(FC)
 RWORDSIZE       =       $(NATIVE_RWORDSIZE)
 PROMOTION       =       #-fdefault-real-8
-ARCH_LOCAL      =       -DNONSTANDARD_SYSTEM_SUBR  -DWRF_USE_CLM -DNO_IEEE_MODULE
+ARCH_LOCAL      =       -DNONSTANDARD_SYSTEM_SUBR  -DWRF_USE_CLM $(NETCDF4_IO_OPTS) -DNO_IEEE_MODULE
 CFLAGS_LOCAL    =       -w -O3 -c 
 LDFLAGS_LOCAL   =       
 CPLUSPLUSLIB    =       
@@ -141,7 +141,7 @@ BYTESWAPIO      =       -fconvert=big-endian -frecord-marker=4
 FCBASEOPTS_NO_G =       -w $(FORMAT_FREE) $(BYTESWAPIO)
 FCBASEOPTS      =       $(FCBASEOPTS_NO_G) $(FCDEBUG)
 MODULE_SRCH_FLAG =     
-TRADFLAG        =      -traditional-cpp
+TRADFLAG        =      -traditional-cpp $(NETCDF4_IO_OPTS)
 CPP             =      /lib/cpp -P -nostdinc
 AR              =      ar
 ARFLAGS         =      ru
@@ -219,15 +219,15 @@ CC_TOOLS_CFLAGS = -DNMM_CORE=$(WRF_NMM_CORE)
                       $(WRF_SRC_ROOT_DIR)/frame/pack_utils.o 
 
  LIB_EXTERNAL    = \
-                      -L$(WRF_SRC_ROOT_DIR)/external/io_netcdf -lwrfio_nf -L/opt/Build_WRF/LIBRARIES/netcdf/lib -lnetcdff -lnetcdf     -L/opt/Build_WRF/LIBRARIES/hdf5/lib -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -lm -lz
+                      -L$(WRF_SRC_ROOT_DIR)/external/io_netcdf -lwrfio_nf -L/opt/Build_WRF/LIBRARIES/netcdf/lib -lnetcdff -lnetcdf     -L/opt/Build_WRF/LIBRARIES/hdf5/lib/lib -lhdf5hl_fortran -lhdf5_hl -lhdf5_fortran -lhdf5 -lm -lz
 
-LIB             =    $(LIB_BUNDLED) $(LIB_EXTERNAL) $(LIB_LOCAL) $(LIB_WRF_HYDRO)
+LIB             =    $(LIB_BUNDLED) $(LIB_EXTERNAL) $(LIB_LOCAL) $(LIB_WRF_HYDRO) $(NETCDF4_DEP_LIB)
 LDFLAGS         =    $(OMP) $(FCFLAGS) $(LDFLAGS_LOCAL) 
 ENVCOMPDEFS     =    
 WRF_CHEM	=	0 
 CPPFLAGS        =    $(ARCHFLAGS) $(ENVCOMPDEFS) -I$(LIBINCLUDE) $(TRADFLAG) 
 NETCDFPATH      =    /opt/Build_WRF/LIBRARIES/netcdf
-HDF5PATH        =    /opt/Build_WRF/LIBRARIES/hdf5
+HDF5PATH        =    /opt/Build_WRF/LIBRARIES/hdf5/lib
 WRFPLUSPATH     =    
 RTTOVPATH       =    
 PNETCDFPATH     =    

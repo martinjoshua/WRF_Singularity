@@ -13,13 +13,13 @@ Stage: develop
     # /home/joshua/mpich-3.0.4.tar.gz /opt/Build_WRF/LIBRARIES/mpich-3.0.4.tar.gz
     # /home/joshua/zlib-1.2.11.tar.gz /opt/Build_WRF/LIBRARIES/zlib-1.2.11.tar.gz
     # /home/joshua/jasper-1.900.1.tar.gz /opt/Build_WRF/LIBRARIES/jasper-1.900.1.tar.gz
-    configure.wps /tmp/configure.wps
-    configure.wrf /tmp/configure.wrf
+    configure.wps /opt/Build_WRF/configure.wps
+    configure.wrf /opt/Build_WRF/configure.wrf
 
 %post
     yum -y update
     yum -y groupinstall "Development Tools" "Development Libraries"
-    yum -y install gcc gcc-gfortran gcc-c++ git wget csh libpng-devel m4 curl-devel which time
+    yum -y install gcc gcc-gfortran gcc-c++ git wget csh libpng-devel m4 curl-devel which time cmake
 
     BASE_DIR=/opt/Build_WRF
     DIR=$BASE_DIR/LIBRARIES
@@ -69,9 +69,9 @@ Stage: develop
     make install
     cd .. 
 
-    wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/mpich-3.0.4.tar.gz
-    tar xzvf mpich-3.0.4.tar.gz      
-    cd mpich-3.0.4
+    wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
+    tar xzvf mpich-3.3.2.tar.gz
+    cd mpich-3.3.2
     ./configure --prefix=$DIR/mpich
     make
     make install
@@ -85,24 +85,25 @@ Stage: develop
     make install
     cd .. 
 
-    wget http://www2.mmm.ucar.edu/wrf/OnLineTutorial/compile_tutorial/tar_files/jasper-1.900.1.tar.gz
-    tar xzvf jasper-1.900.1.tar.gz  
-    cd jasper-1.900.1
+    wget https://github.com/mdadams/jasper/archive/version-1.900.1.tar.gz
+    tar xzvf version-1.900.1.tar.gz  
+    cd jasper-version-1.900.1
     ./configure --prefix=$DIR/grib2
     make
     make install
-    cd ../../ 
 
-    git clone https://github.com/wrf-model/WRF.git
-    mv /tmp/configure.wrf /opt/Build_WRF/WRF/configure.wrf
+    cd $BASE_DIR 
+
+    git clone https://github.com/martinjoshua/WRF.git
+    mv configure.wrf WRF/configure.wrf
     cd WRF
     # ./configure
     ./compile em_real 
     #> compile.log 2>&1 
     cd ..
 
-    git clone https://github.com/wrf-model/WPS.git
-    mv /tmp/configure.wps /opt/Build_WRF/WPS/configure.wps
+    git clone https://github.com/martinjoshua/WPS.git
+    mv configure.wps WPS/configure.wps
     cd WPS
     # ./configure
     ./compile 
