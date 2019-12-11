@@ -25,7 +25,7 @@ cd ubuntu
 sudo singularity build ../wrf.sif ubuntu1804.def
 # OR
 cd centos
-sudo singularity build ../wrf.sif centos.def
+sudo singularity build ../wrf.sif centos7.def
 ```
 
 #### Set exec permission and download the initialization data for the WRF from NCEP (modify download.sh to change date/time)
