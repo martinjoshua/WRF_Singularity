@@ -7,5 +7,6 @@ wrf-run/namelist.output
 wrf-run/*.nc
 wrf-run/FILE:*
 wrf-run/wrf*
+WPS_GEOG/*
 *.sif
 *.zip
