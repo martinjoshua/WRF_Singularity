@@ -10,3 +10,4 @@ wrf-run/wrf*
 WPS_GEOG/*
 *.sif
 *.zip
+*.tar.gz
