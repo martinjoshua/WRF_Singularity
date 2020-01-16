@@ -7,7 +7,7 @@ Before getting started, follow the directions on the [Singularity Installation p
 
 ```
 sudo apt-get install mpich
-git clone https://github.com/martinjoshua/WRF_Singularity.git`
+git clone https://github.com/martinjoshua/WRF_Singularity.git
 cd WRF_Singularity
 ```
 
@@ -28,12 +28,12 @@ cd centos
 sudo singularity build ../wrf.sif centos7.def
 ```
 
-#### Set exec permission and download the initialization data for the WRF from NCEP (modify download.sh to change date/time)
+#### Set exec permission and download the initialization data for the WRF from NCEP (modify urls.txt to change date/time)
 
 ```
 cd ../wrf-run
-chmod +x download.sh link_grib.csh
-./download.sh <your e-mail address>
+chmod +x run.sh
+./run.sh <your e-mail address>
 ```
 
 #### Modify the below namelists to match the downloaded files
@@ -43,16 +43,10 @@ nano namelist.wps
 nano namelist.input
 ```
 
-#### Run WPS (binding the WPS_GEOG directory to /mnt/WPS_GEOG)
+#### Run geogrid (binding the WPS_GEOG directory to /mnt/WPS_GEOG)
 
 ```
 singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif "/opt/Build_WRF/Run/WPS/geogrid.exe"
-```
-
-#### Run the link_grib script (which copies and renames the grib files in the DATA directory to the working directory)
-
-```
-singularity exec --bind ../WPS_GEOG:/mnt/WPS_GEOG ../wrf.sif /bin/bash -c "./link_grib.csh DATA/GFS"
 ```
 
 #### Run ungrib
