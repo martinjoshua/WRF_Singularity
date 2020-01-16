@@ -1,0 +1,4 @@
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.20200113/00/gfs.t00z.pgrb2.0p50.f000
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.20200113/00/gfs.t00z.pgrb2.0p50.f003
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.20200113/00/gfs.t00z.pgrb2.0p50.f006
+ftp://ftpprd.ncep.noaa.gov/pub/data/nccf/com/gfs/prod/gfs.20200113/00/gfs.t00z.pgrb2.0p50.f012

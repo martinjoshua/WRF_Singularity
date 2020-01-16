@@ -1,0 +1,1 @@
+rm -f wrf* GRIBFILE.* FILE*  *.nc rsl.*
