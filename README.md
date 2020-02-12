@@ -6,7 +6,7 @@ Before getting started, follow the directions on the [Singularity Installation p
 #### Install mpich on the host and clone the repository
 
 ```
-sudo apt-get install mpich
+sudo apt-get install mpich git git-lfs
 git clone https://github.com/martinjoshua/WRF_Singularity.git
 cd WRF_Singularity
 ```
