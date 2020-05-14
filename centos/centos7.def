@@ -19,7 +19,7 @@ Stage: develop
 %post
     yum -y update
     yum -y groupinstall "Development Tools" "Development Libraries"
-    yum -y install gcc gcc-gfortran gcc-c++ git wget csh libpng-devel m4 curl-devel which time cmake
+    yum -y install gcc gcc-gfortran gcc-c++ git wget csh libpng-devel m4 curl-devel which time cmake libfabric
 
     BASE_DIR=/opt/Build_WRF
     DIR=$BASE_DIR/LIBRARIES
@@ -56,7 +56,7 @@ Stage: develop
     wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.7.2.tar.gz
     tar xzvf netcdf-c-4.7.2.tar.gz     
     cd netcdf-c-4.7.2
-    ./configure --prefix=$DIR/netcdf --enable-netcdf-4 LDFLAGS="-L$DIR/hdf5/lib" CPPFLAGS="-I$DIR/hdf5/include" 
+    ./configure --prefix=$DIR/netcdf --disable-dap-remote-tests --enable-netcdf-4 LDFLAGS="-L$DIR/hdf5/lib" CPPFLAGS="-I$DIR/hdf5/include" 
     make
     make install
     cd .. 
@@ -72,7 +72,7 @@ Stage: develop
     wget http://www.mpich.org/static/downloads/3.3.2/mpich-3.3.2.tar.gz
     tar xzvf mpich-3.3.2.tar.gz
     cd mpich-3.3.2
-    ./configure --prefix=$DIR/mpich
+    ./configure --prefix=$DIR/mpich --with-device=ch4:ofi
     make
     make install
     cd .. 
@@ -176,7 +176,7 @@ Stage: final
 
 %post
     yum -y update
-    yum -y install gcc-gfortran csh libpng-devel curl-devel
+    yum -y install gcc-gfortran csh libpng-devel curl-devel libfabric
 
 %environment
     export DIR=/opt/Build_WRF/LIBRARIES
